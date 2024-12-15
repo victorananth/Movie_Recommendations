@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import st_star_rating 
 #from streamlit_star_rating import st_star_rating  # Import the star rating component
 
 # Define the base directory where the CSV files are located
