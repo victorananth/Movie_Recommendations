@@ -1,0 +1,4 @@
+streamlit
+streamlit-star-rating
+pandas
+numpy
