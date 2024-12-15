@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-#import st_star_rating 
 from streamlit_star_rating import st_star_rating  # Import the star rating component
 
 # Define the base directory where the CSV files are located
@@ -10,7 +9,7 @@ base_dir = '/Users/victorananthratchagar/Documents/MCS Course/CS598 - Practical 
 # Reading the rating matrix (Rmat.csv)
 #rmat = pd.read_csv(f'{base_dir}Rmat.csv')
 #rmat = pd.read_csv('https://github.com/victorananth/Movie_Recommendations/blob/main/Rmat_100.csv')
-rmat = pd.read_csv('Rmat_100.csv', header=0)
+rmat = pd.read_csv('Rmat.csv', header=0)
 
 print("Rating Matrix Shape:", rmat.shape)
 n_users = rmat.shape[0]
@@ -21,7 +20,7 @@ m_ids = rmat.columns
 
 # Reading the similarity matrix (similarity.csv)
 # similarity_df = pd.read_csv(f'{base_dir}similarity.csv')
-similarity_df = pd.read_csv('similarity_top_30_first_100_movies.csv').iloc[:,1:]
+similarity_df = pd.read_csv('similarity.csv').iloc[:,1:]
 
 similarity_df.columns = m_ids
 similarity_df.index = m_ids
