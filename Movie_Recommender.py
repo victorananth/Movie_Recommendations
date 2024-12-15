@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from streamlit_star_rating import st_star_rating  # Import the star rating component
+#from streamlit_star_rating import st_star_rating  # Import the star rating component
 
 # Define the base directory where the CSV files are located
 base_dir = '/Users/victorananthratchagar/Documents/MCS Course/CS598 - Practical Statistical Learning (PSL)/Project 4/'
