@@ -7,7 +7,10 @@ from streamlit_star_rating import st_star_rating  # Import the star rating compo
 base_dir = '/Users/victorananthratchagar/Documents/MCS Course/CS598 - Practical Statistical Learning (PSL)/Project 4/'
 
 # Reading the rating matrix (Rmat.csv)
-rmat = pd.read_csv(f'{base_dir}Rmat.csv')
+#rmat = pd.read_csv(f'{base_dir}Rmat.csv')
+#rmat = pd.read_csv('https://github.com/victorananth/Movie_Recommendations/blob/main/Rmat_100.csv')
+rmat = pd.read_csv('Rmat_100.csv', header=0)
+
 print("Rating Matrix Shape:", rmat.shape)
 n_users = rmat.shape[0]
 m_movies = rmat.shape[1]
@@ -16,15 +19,17 @@ m_movies = rmat.shape[1]
 m_ids = rmat.columns
 
 # Reading the similarity matrix (similarity.csv)
-S_df = pd.read_csv(f'{base_dir}similarity.csv')
-S_df.columns = m_ids
-S_df.index = m_ids
+# similarity_df = pd.read_csv(f'{base_dir}similarity.csv')
+similarity_df = pd.read_csv('similarity_top_30_first_100_movies.csv').iloc[:,1:]
+
+similarity_df.columns = m_ids
+similarity_df.index = m_ids
 
 # Convert the similarity matrix to a NumPy array
-S = S_df.values
+S = similarity_df.values
 
 # Load the pop_ranked.csv, which contains MovieID and UserID columns
-pop_ranked = pd.read_csv(f'{base_dir}pop_ranked_ids.csv')
+pop_ranked = pd.read_csv('pop_ranked_ids.csv')
 
 # Load movie data
 movies = pd.read_csv(
@@ -50,31 +55,31 @@ def myIBCF(newuser, S, R, pop_ranked):
         else:
             pred_ratings[i] = numerator / denom
         
-    # Get top 20 recommended movie indices
-    top_20_i = (-pred_ratings).argsort()[:20]
-    top_20 = R.columns[top_20_i]
+    # Get top 10 recommended movie indices
+    top_10_i = (-pred_ratings).argsort()[:10]
+    top_10 = R.columns[top_10_i]
     
-    # For every NaN in the top 20, replace with top movies ranked by popularity
-    for i in range(len(top_20)):
-        # If an element in the top 20 is not a movie ID (str), replace it
-        if type(top_20[i]) != str:
+    # For every NaN in the top 10, replace with top movies ranked by popularity
+    for i in range(len(top_10)):
+        # If an element in the top 10 is not a movie ID (str), replace it
+        if type(top_10[i]) != str:
             # Go down the list of movies ranked by popularity (pop_ranked)
             for mid in pop_ranked['MovieID']:
                 mid_i = np.where(R.columns == f'm{mid}')
                 newuser_rating = newuser[mid_i][0]
                 
-                # If the new user has not rated it and it's not already in the top 20, add to top 20
-                if np.isnan(newuser_rating) and mid not in top_20:
-                    top_20[i] = f'm{mid}'
+                # If the new user has not rated it and it's not already in the top 10, add to top 10
+                if np.isnan(newuser_rating) and mid not in top_10:
+                    top_10[i] = f'm{mid}'
                     break
-    return top_20
+    return top_10
 
 # Streamlit UI setup
 st.title("Movie Recommendation System")
 
 st.write("""
     This is a movie recommendation app using Item-Based Collaborative Filtering (IBCF). 
-    Please rate the movies, and we will suggest 20 movies based on your preferences.
+    Please rate the movies, and we will suggest 10 movies based on your preferences.
 """)
 
 st.write("""Developed by Brandon and Victor for PSL - Final Project - Fall 2024""")
@@ -116,12 +121,12 @@ for movie_id, rating in user_ratings.items():
     movie_idx = np.where(m_ids == movie_id)[0][0]
     newuser_hyp[movie_idx] = rating
 
-# Get top 20 recommendations when user clicks the button
+# Get top 10 recommendations when user clicks the button
 if st.button('Get Recommendations'):
     recommendations = myIBCF(newuser_hyp, S, rmat, pop_ranked)
     
     # Display recommended movies
-    st.write("Here are your top 20 movie recommendations:")
+    st.write("Here are your top 10 movie recommendations:")
 
     # Map recommended movie IDs to the movies DataFrame
     recommended_movie_ids = [int(mid[1:]) for mid in recommendations if isinstance(mid, str)]
